@@ -1,65 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>redirecting...</title>
-    <style>
-        body {
-            background: #000000;
-            color: #000000;
-            font-family: system-ui, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            flex-direction: column;
-            text-align: center;
-        }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        p { opacity: 0.7; }
-    </style>
-    <script>
-        const fallbackURL = "https://fonseware.com";
-        const redirectsFile = "/redirects.json";
-
-        async function redirectUser() {
-            const url = new URL(window.location.href);
-            const key = url.searchParams.get("u") || url.pathname.slice(1);
-
-            // base domain -> main website
-            if (!key) {
-                window.location.replace(fallbackURL);
-                return;
-            }
-
-            try {
-                const res = await fetch(redirectsFile, { cache: "no-store" });
-                const redirects = await res.json();
-
-                const found = redirects.find(
-                    item => item.id.toLowerCase() === key.toLowerCase()
-                );
-
-                // match found in redirects.json
-                if (found && found.url) {
-                    window.location.replace(found.url);
-                } else {
-                    alert(`we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`);
-                    window.location.replace(fallbackURL);
-                }
-            } catch (err) {
-                console.error("redirect error:", err);
-                alert("hmm... something went wrong. redirecting to fonseware.com.");
-                window.location.replace(fallbackURL);
-            }
-        }
-
-        redirectUser();
-    </script>
+    <meta http-equiv="refresh" content="0; url=https://fonseware.com">
+    <script>window.location.replace("https://fonseware.com");</script>
 </head>
-<body>
-<!--<h1>ok redirecting...</h1>
-<p>please wait while we redirect you to the right place.</p>-->
-</body>
 </html>
