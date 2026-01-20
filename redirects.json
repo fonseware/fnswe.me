@@ -2,12 +2,12 @@
   {
     "id": "vod",
     "url": "https://vod.fonseware.com/",
-    "tags": ["video", "vod", "media"]
+    "tags": ["vod", "media"]
   },
   {
     "id": "tv",
     "url": "https://vod.fonseware.com/tv",
-    "tags": ["video", "vod", "media"]
+    "tags": ["tv", "vod", "media"]
   },
 
     {
@@ -18,7 +18,7 @@
     {
     "id": "radio",
     "url": "https://vod.fonseware.com/radio-live",
-    "tags": ["account", "id"]
+    "tags": ["radio", "vod","media"]
   },
   {
     "id": "app-tv",
@@ -28,11 +28,16 @@
   {
     "id": "status",
     "url": "https://status.fonseware.com/",
-    "tags": ["help", "documentation"]
+    "tags": ["status"]
   },
   {
     "id": "id",
     "url": "https://id.fonseware.com/",
     "tags": ["account", "id"]
+  }
+  ,   {
+    "id": "links",
+    "url": "https://linktr.ee/shannonf0nseka",
+    "tags": ["links", "my page"]
   }
 ]
