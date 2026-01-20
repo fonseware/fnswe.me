@@ -2,11 +2,12 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>redirecting...</title>
     <style>
         body {
             background: #000000;
-            color: #ffffff; /* White text */
+            color: #ffffff; /* FIXED: White text so you can see it */
             font-family: system-ui, sans-serif;
             display: flex;
             align-items: center;
@@ -15,31 +16,34 @@
             flex-direction: column;
             text-align: center;
         }
+        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        p { opacity: 0.7; }
     </style>
     <script>
         const fallbackURL = "https://fonseware.com";
-        const redirectsFile = "./redirects.json"; // Relative path is safer
+        const redirectsFile = "./redirects.json"; // FIXED: Relative path
 
         async function redirectUser() {
-            // Get path, strip leading slash
-            let key = window.location.pathname.substring(1);
+            const url = new URL(window.location.href);
             
-            // Remove trailing slash if present (e.g. "vod/" -> "vod")
-            if (key.endsWith('/')) {
+            // Logic: Check for ?u= parameter first, otherwise check the path (like /vod)
+            let key = url.searchParams.get("u") || url.pathname.slice(1);
+
+            // Clean up: Remove trailing slash if it exists (e.g. "vod/" -> "vod")
+            if (key && key.endsWith('/')) {
                 key = key.slice(0, -1);
             }
 
-            // If empty (root domain), go to fallback
+            // If no key (just visiting fnswe.me), go to main website
             if (!key) {
                 window.location.replace(fallbackURL);
                 return;
             }
 
             try {
-                const res = await fetch(redirectsFile);
+                const res = await fetch(redirectsFile, { cache: "no-store" });
                 const redirects = await res.json();
 
-                // Case-insensitive search
                 const found = redirects.find(
                     item => item.id.toLowerCase() === key.toLowerCase()
                 );
@@ -47,18 +51,19 @@
                 if (found && found.url) {
                     window.location.replace(found.url);
                 } else {
-                    // console.log("Key not found:", key); // Debugging
+                    alert(`we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`);
                     window.location.replace(fallbackURL);
                 }
             } catch (err) {
-                // console.error(err);
+                console.error("redirect error:", err);
+                alert("hmm... something went wrong. redirecting to fonseware.com.");
                 window.location.replace(fallbackURL);
             }
         }
+
         redirectUser();
     </script>
 </head>
 <body>
-    <p>redirecting...</p>
-</body>
+    </body>
 </html>
