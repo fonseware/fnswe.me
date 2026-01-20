@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Redirecting...</title>
+    <style>
+        body {
+            background: #000000;
+            color: #ffffff; /* White text */
+            font-family: system-ui, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            flex-direction: column;
+            text-align: center;
+        }
+    </style>
+    <script>
+        const fallbackURL = "https://fonseware.com";
+        const redirectsFile = "./redirects.json"; // Relative path is safer
+
+        async function redirectUser() {
+            // Get path, strip leading slash
+            let key = window.location.pathname.substring(1);
+            
+            // Remove trailing slash if present (e.g. "vod/" -> "vod")
+            if (key.endsWith('/')) {
+                key = key.slice(0, -1);
+            }
+
+            // If empty (root domain), go to fallback
+            if (!key) {
+                window.location.replace(fallbackURL);
+                return;
+            }
+
+            try {
+                const res = await fetch(redirectsFile);
+                const redirects = await res.json();
+
+                // Case-insensitive search
+                const found = redirects.find(
+                    item => item.id.toLowerCase() === key.toLowerCase()
+                );
+
+                if (found && found.url) {
+                    window.location.replace(found.url);
+                } else {
+                    // console.log("Key not found:", key); // Debugging
+                    window.location.replace(fallbackURL);
+                }
+            } catch (err) {
+                // console.error(err);
+                window.location.replace(fallbackURL);
+            }
+        }
+        redirectUser();
+    </script>
+</head>
+<body>
+    <p>redirecting...</p>
+</body>
+</html>
