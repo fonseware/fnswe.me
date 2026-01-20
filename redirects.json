@@ -1,0 +1,38 @@
+[
+  {
+    "id": "vod",
+    "url": "https://vod.fonseware.com/",
+    "tags": ["video", "vod", "media"]
+  },
+  {
+    "id": "tv",
+    "url": "https://vod.fonseware.com/tv",
+    "tags": ["video", "vod", "media"]
+  },
+
+    {
+    "id": "tvd",
+    "url": "https://vod.fonseware.com/tv?debug=true",
+    "tags": ["video", "vod", "media"]
+  },
+    {
+    "id": "radio",
+    "url": "https://vod.fonseware.com/radio-live",
+    "tags": ["account", "id"]
+  },
+  {
+    "id": "app-tv",
+    "url": "https://vod.fonseware.com/tv",
+    "tags": ["video", "vod", "media"]
+  },
+  {
+    "id": "status",
+    "url": "https://status.fonseware.com/",
+    "tags": ["help", "documentation"]
+  },
+  {
+    "id": "id",
+    "url": "https://id.fonseware.com/",
+    "tags": ["account", "id"]
+  }
+]
