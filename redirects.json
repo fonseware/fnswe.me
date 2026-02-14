@@ -21,23 +21,18 @@
     "tags": ["radio", "vod","media"]
   },
   {
-    "id": "app-tv",
-    "url": "https://vod.fonseware.com/tv",
-    "tags": ["video", "vod", "media"]
-  },
-  {
     "id": "status",
     "url": "https://status.fonseware.com/",
     "tags": ["status"]
   },
   {
-    "id": "id",
-    "url": "https://id.fonseware.com/",
-    "tags": ["account", "id"]
-  }
-  ,   {
     "id": "links",
     "url": "https://linktr.ee/shannonf0nseka",
     "tags": ["links", "my page"]
+  },
+    {
+    "id": "ws",
+    "url": "https://workspace.fonseware.com/",
+    "tags": ["workspace", "data", "media", "storage"]
   }
 ]
