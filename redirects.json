@@ -34,5 +34,10 @@
     "id": "ws",
     "url": "https://workspace.fonseware.com/",
     "tags": ["workspace", "data", "media", "storage"]
+  },
+      {
+    "id": "cable",
+    "url": "https://raw.githubusercontent.com/fonseware/fonseware-cable/refs/heads/main/channels.m3u",
+    "tags": ["workspace", "data", "media", "storage3"]
   }
 ]
