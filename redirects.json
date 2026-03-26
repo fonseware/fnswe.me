@@ -34,5 +34,10 @@
     "id": "ws",
     "url": "https://workspace.fonseware.com/",
     "tags": ["workspace", "data", "media", "storage"]
+  },
+  {
+        "id": "chat",
+    "url": "https://chat.fonseware.com/",
+    "tags": ["chat", "talk", "community"]
   }
 ]
