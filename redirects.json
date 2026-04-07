@@ -1,26 +1,5 @@
 [
   {
-    "id": "vod",
-    "url": "https://vod.fonseware.com/",
-    "tags": ["vod", "media"]
-  },
-  {
-    "id": "tv",
-    "url": "https://vod.fonseware.com/tv",
-    "tags": ["tv", "vod", "media"]
-  },
-
-    {
-    "id": "tvd",
-    "url": "https://vod.fonseware.com/tv?debug=true",
-    "tags": ["video", "vod", "media"]
-  },
-    {
-    "id": "radio",
-    "url": "https://vod.fonseware.com/radio-live",
-    "tags": ["radio", "vod","media"]
-  },
-  {
     "id": "status",
     "url": "https://status.fonseware.com/",
     "tags": ["status"]
@@ -29,15 +8,5 @@
     "id": "links",
     "url": "https://linktr.ee/shannonf0nseka",
     "tags": ["links", "my page"]
-  },
-    {
-    "id": "ws",
-    "url": "https://workspace.fonseware.com/",
-    "tags": ["workspace", "data", "media", "storage"]
-  },
-  {
-        "id": "chat",
-    "url": "https://chat.fonseware.com/",
-    "tags": ["chat", "talk", "community"]
   }
 ]
