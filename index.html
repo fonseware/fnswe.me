@@ -141,13 +141,13 @@
               alert(
                 `we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`,
               );
-              //window.location.replace(fallbackURL);
+              window.location.replace(fallbackURL);
             }, 1000); // 1 second delay before redirecting
           }
         } catch (err) {
           console.error("redirect error:", err);
           alert("hmm... something went wrong. redirecting to fonseware.com.");
-          //window.location.replace(fallbackURL);
+          window.location.replace(fallbackURL);
         }
       }
 
