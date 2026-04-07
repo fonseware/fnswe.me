@@ -53,44 +53,6 @@
         font-size: 0.95rem;
         line-height: 1.4;
       }
-      .button-container {
-        display: flex;
-        gap: 12px;
-        justify-content: center;
-        flex-wrap: wrap;
-        width: 100%;
-        margin-bottom: 16px;
-      }
-
-      /* custom button designs */
-      button {
-        font-family: "Cabin", system-ui, sans-serif;
-        padding: 10px 16px;
-        border: none;
-        border-radius: 6px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: 0.2s;
-        flex: 1;
-        min-width: 120px;
-      }
-      .btn-status {
-        background: transparent;
-        color: #990099;
-        border: 2px solid #990099;
-      }
-      .btn-status:hover {
-        color: #460046;
-        border-color: #460046;
-      }
-
-      .btn-grass {
-        background: #990099;
-        color: white;
-      }
-      .btn-grass:hover {
-        background: #460046;
-      }
 
       /* styling for your image placeholder */
       .logo-placeholder {
@@ -104,7 +66,6 @@
     <script>
       const fallbackURL = "https://fonseware.com";
       const redirectsFile = "./redirects.json"; // FIXED: Relative path
-      document.getElementById("site-url").textContent = "loading...";
       async function redirectUser() {
         const url = new URL(window.location.href);
 
@@ -131,18 +92,16 @@
           );
 
           if (found && found.url) {
-            const domain = new URL(found.url).hostname;
-            document.getElementById("site-url").textContent = domain;
             setTimeout(() => {
               window.location.replace(found.url);
-            }, 2000); // 2 second delay before redirecting
+            }, 2000); // 2-second delay before redirecting
           } else {
             setTimeout(() => {
               alert(
                 `we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`,
               );
               window.location.replace(fallbackURL);
-            }, 1000); // 1 second delay before redirecting
+            }, 1000); // 1-second delay before redirecting
           }
         } catch (err) {
           console.error("redirect error:", err);
@@ -151,23 +110,18 @@
         }
       }
 
-      window.onload = redirectUser;
+      redirectUser();
     </script>
   </head>
   <body>
     <div class="modal">
-      <h2>
-        redirecting to "
-        <span id="site-url">...</span>
-        "
-      </h2>
+      <h2></h2>
       <p>we will be redirecting to the requested site shortly...</p>
       <a href="https://fonseware.com" style="display: inline-block">
         <img
           src="https://github.com/fonseware/.github/blob/main/fw_logo.png?raw=true"
           alt="fonseware logo"
-          class="logo-placeholder"
-      /></a>
+          class="logo-placeholder"/></a>
     </div>
   </body>
 </html>
