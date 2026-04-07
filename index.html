@@ -1,69 +1,174 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
     <title>redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="icon"
+      type="image/x-icon"
+      href="https://github.com/fonseware/.github/blob/main/fw_favicon.png?raw=true"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;600&family=Geist:wght@600;800&display=swap"
+      rel="stylesheet"
+    />
     <style>
-        body {
-            background: #000000;
-            color: #ffffff; /* FIXED: White text so you can see it */
-            font-family: system-ui, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            flex-direction: column;
-            text-align: center;
-        }
-        h1 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        p { opacity: 0.7; }
+      /* background */
+      body {
+        font-family: "Cabin", system-ui, sans-serif;
+        background: #000000;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      /* fake message box */
+      .modal {
+        background: #cc99cc;
+        padding: 24px;
+        border-radius: 12px;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        text-align: center;
+        max-width: 350px;
+        width: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      /* geist font for the title */
+      h2 {
+        font-family: "Geist", system-ui, sans-serif;
+        margin-top: 0;
+        color: #990099;
+        font-size: 1.3rem;
+      }
+      /* cabin font for the body */
+      p {
+        color: #000000;
+        margin-bottom: 24px;
+        font-size: 0.95rem;
+        line-height: 1.4;
+      }
+      .button-container {
+        display: flex;
+        gap: 12px;
+        justify-content: center;
+        flex-wrap: wrap;
+        width: 100%;
+        margin-bottom: 16px;
+      }
+
+      /* custom button designs */
+      button {
+        font-family: "Cabin", system-ui, sans-serif;
+        padding: 10px 16px;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: 0.2s;
+        flex: 1;
+        min-width: 120px;
+      }
+      .btn-status {
+        background: transparent;
+        color: #990099;
+        border: 2px solid #990099;
+      }
+      .btn-status:hover {
+        color: #460046;
+        border-color: #460046;
+      }
+
+      .btn-grass {
+        background: #990099;
+        color: white;
+      }
+      .btn-grass:hover {
+        background: #460046;
+      }
+
+      /* styling for your image placeholder */
+      .logo-placeholder {
+        max-width: 150px;
+        height: auto;
+        display: block;
+        margin-top: 10px;
+        pointer-events: none;
+      }
     </style>
     <script>
-        const fallbackURL = "https://fonseware.com";
-        const redirectsFile = "./redirects.json"; // FIXED: Relative path
+      const fallbackURL = "https://fonseware.com";
+      const redirectsFile = "./redirects.json"; // FIXED: Relative path
+      document.getElementById("site-url").textContent = "loading...";
+      async function redirectUser() {
+        const url = new URL(window.location.href);
 
-        async function redirectUser() {
-            const url = new URL(window.location.href);
-            
-            // Logic: Check for ?u= parameter first, otherwise check the path (like /vod)
-            let key = url.searchParams.get("u") || url.pathname.slice(1);
+        // Logic: Check for ?u= parameter first, otherwise check the path (like /vod)
+        let key = url.searchParams.get("u") || url.pathname.slice(1);
 
-            // Clean up: Remove trailing slash if it exists (e.g. "vod/" -> "vod")
-            if (key && key.endsWith('/')) {
-                key = key.slice(0, -1);
-            }
-
-            // If no key (just visiting fnswe.me), go to main website
-            if (!key) {
-                window.location.replace(fallbackURL);
-                return;
-            }
-
-            try {
-                const res = await fetch(redirectsFile, { cache: "no-store" });
-                const redirects = await res.json();
-
-                const found = redirects.find(
-                    item => item.id.toLowerCase() === key.toLowerCase()
-                );
-
-                if (found && found.url) {
-                    window.location.replace(found.url);
-                } else {
-                    alert(`we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`);
-                    window.location.replace(fallbackURL);
-                }
-            } catch (err) {
-                console.error("redirect error:", err);
-                alert("hmm... something went wrong. redirecting to fonseware.com.");
-                window.location.replace(fallbackURL);
-            }
+        // Clean up: Remove trailing slash if it exists (e.g. "vod/" -> "vod")
+        if (key && key.endsWith("/")) {
+          key = key.slice(0, -1);
         }
 
-        redirectUser();
+        // If no key (just visiting fnswe.me), go to main website
+        if (!key) {
+          window.location.replace(fallbackURL);
+          return;
+        }
+
+        try {
+          const res = await fetch(redirectsFile, { cache: "no-store" });
+          const redirects = await res.json();
+
+          const found = redirects.find(
+            (item) => item.id.toLowerCase() === key.toLowerCase(),
+          );
+
+          if (found && found.url) {
+            const domain = new URL(found.url).hostname;
+            document.getElementById("site-url").textContent = domain;
+            setTimeout(() => {
+              window.location.replace(found.url);
+            }, 2000); // 2 second delay before redirecting
+          } else {
+            setTimeout(() => {
+              alert(
+                `we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`,
+              );
+              //window.location.replace(fallbackURL);
+            }, 1000); // 1 second delay before redirecting
+          }
+        } catch (err) {
+          console.error("redirect error:", err);
+          alert("hmm... something went wrong. redirecting to fonseware.com.");
+          //window.location.replace(fallbackURL);
+        }
+      }
+
+      window.onload = redirectUser;
     </script>
-</head>
-<body>
-    </body>
+  </head>
+
+  <body>
+    <div class="modal">
+      <h2>
+        redirecting to "
+        <span id="site-url">...</span>
+        "
+      </h2>
+      <p>we will be redirecting to the requested site shortly...</p>
+      <a href="https://fonseware.com" style="display: inline-block">
+        <img
+          src="https://github.com/fonseware/.github/blob/main/fw_logo.png?raw=true"
+          alt="fonseware logo"
+          class="logo-placeholder"
+      /></a>
+    </div>
+  </body>
 </html>
