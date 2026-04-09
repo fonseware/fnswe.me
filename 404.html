@@ -58,14 +58,12 @@
 
     /* styling for your image placeholder */
     .logo-placeholder {
-      max-width: 150px;
-      height: auto;
       display: block;
       margin-top: 10px;
       pointer-events: none;
       border-radius: 8px;
-      min-height: 40px; /* Ensures skeleton has height before load */
-      min-width: 120px;
+      padding: 10px;
+      height: 25px;
     }
 
     .link {
@@ -134,17 +132,17 @@
 
     // Dynamically update the HTML title with the requested key
     if (key) {
-      titleEl.textContent = `redirecting to "${key}"...`;
+      titleEl.textContent = `redirecting to "${key}"`;
     } else {
-      titleEl.textContent = `redirecting to fonseware.com...`;
-      manualLinkEl.textContent = `fonseware points to ${fallbackURL}`;
+      titleEl.textContent = `redirecting to fonseware.com`;
+      manualLinkEl.textContent = `${fallbackURL}`;
     }
 
     // If no key (just visiting fnswe.me), go to main website
     if (!key) {
       setTimeout(() => {
         window.location.replace(fallbackURL);
-      }, 3000); // 3-second delay before redirecting
+      }, 6000); // 6-second delay before redirecting
       return;
     }
 
@@ -163,15 +161,16 @@
 
         setTimeout(() => {
           window.location.replace(found.url);
-        }, 3000); // 3-second delay before redirecting
+        }, 6000); // 6-second delay before redirecting
       } else {
-        manualLinkEl.textContent = `url not found, pointing to ${fallbackURL}`;
+        manualLinkEl.textContent = `ERR: url not found, go to fonseware.com?`;
+        titleEl.textContent = `uh. oh. destination URL not found`;
         setTimeout(() => {
-          alert(
-                  `we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`,
-          );
-          window.location.replace(fallbackURL);
-        }, 2000); // 2-second delay before redirecting
+          //alert(
+         //         `we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`,
+          //);
+          //window.location.replace(fallbackURL);
+        }, 6000); // 6-second delay before redirecting
       }
     } catch (err) {
       console.error("redirect error:", err);
