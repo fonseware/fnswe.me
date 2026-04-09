@@ -70,7 +70,7 @@
       color: #990099;
       text-decoration: underline;
       cursor: pointer;
-      font-weight: bold;
+      font-weight: bolder;
     }
 
     /* SLIDING SKELETON LOADING STYLES */
@@ -102,7 +102,7 @@
 <body>
 <div class="modal">
   <h2 class="skeleton" id="redirect-title">redirecting...</h2>
-  <p class="skeleton">if the site does not redirect automatically, please click the link below to do it for you.</p>
+  <p class="skeleton">please wait while we redirect you to the destination page. if it does not or if you are in a hurry then click the link below.</p>
   <p class="skeleton"><a class="link" id="manual-link" href="https://fonseware.com">loading destination...</a></p>
   <a href="https://fonseware.com" style="display: inline-block">
     <img
@@ -135,7 +135,7 @@
       titleEl.textContent = `redirecting to "${key}"`;
     } else {
       titleEl.textContent = `redirecting to fonseware.com`;
-      manualLinkEl.textContent = `${fallbackURL}`;
+      manualLinkEl.textContent = `in a hurry? click here to go to ${fallbackURL}`;
     }
 
     // If no key (just visiting fnswe.me), go to main website
@@ -157,18 +157,16 @@
       if (found && found.url) {
         // Update the manual link href and text to show where it points
         manualLinkEl.href = found.url;
-        manualLinkEl.textContent = `"${key}" points to ${found.url}`;
+        manualLinkEl.textContent = `"in a hurry? click here to go to ${found.url}`;
 
         setTimeout(() => {
           window.location.replace(found.url);
         }, 6000); // 6-second delay before redirecting
       } else {
-        manualLinkEl.textContent = `ERR: url not found, go to fonseware.com?`;
-        titleEl.textContent = `uh. oh. destination URL not found`;
+        manualLinkEl.textContent = `"${key}" not found, click here to go to ${fallbackURL}`;
+        titleEl.textContent = `uh. oh. destination "${key}" not found`;
         setTimeout(() => {
-          //alert(
-         //         `we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`,
-          //);
+          //alert(`we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`);
           //window.location.replace(fallbackURL);
         }, 6000); // 6-second delay before redirecting
       }
