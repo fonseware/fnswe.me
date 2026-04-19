@@ -178,14 +178,13 @@
     }
   }
 
-  // Execute redirect logic
-  redirectUser();
-
   // Wait for external assets (fonts, images) to finish downloading, then remove skeleton
   window.addEventListener("load", () => {
     document.fonts.ready.then(() => {
       document.querySelectorAll('.skeleton').forEach(el => {
         el.classList.remove('skeleton');
+        // Execute redirect logic
+        redirectUser();
       });
     });
   });
