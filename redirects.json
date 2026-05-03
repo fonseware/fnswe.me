@@ -8,5 +8,10 @@
     "id": "links",
     "url": "https://linktr.ee/shannonf0nseka",
     "tags": ["links", "my page"]
+  },
+  {
+    "id": "my",
+    "url": "https://my.fonseware.com/",
+    "tags": ["account", "user accounts", "my account", "fonseware account"]
   }
 ]
