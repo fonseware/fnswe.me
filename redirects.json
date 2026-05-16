@@ -13,5 +13,10 @@
     "id": "my",
     "url": "https://my.fonseware.com/",
     "tags": ["account", "user accounts", "my account", "fonseware account"]
+  },
+  {
+    "id": "vod",
+    "url": "https://vod.fonseware.com/",
+    "tags": ["video", "vod", "live streams"]
   }
 ]
