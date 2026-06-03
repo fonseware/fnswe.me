@@ -34,7 +34,7 @@ To get your own redirector up and running, follow these steps:
 
 ```
 
-## Automation 🤖
+## Automation
 
 To make life easy, this project already comes with a GitHub Actions workflow attached. Whenever you push changes to `index.html`, this action automatically copies those changes over to `404.html` so you do not have to do it manually.
 
