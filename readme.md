@@ -15,10 +15,10 @@ It supports two types of URL routing:
 To get your own redirector up and running, follow these steps:
 
 1. **Fork this project** to your own GitHub account.
-2. **Edit `index.html` and `404.html`:**
-   * Open the files and scroll down to the script section. Search for `const fallbackURL = "https://fonseware.com";` and change it to your own main website.
+2. **Edit `index.html`:**
+   * Open the file and scroll down to the script section. Search for `const fallbackURL = "https://fonseware.com";` and change it to your own main website.
    * Update the `favicon` link in the `<head>` and the logo `<img>` source in the `<body>` to match your own branding.
-   * *Note: Remember to keep both HTML files exactly identical! Any changes made to the index must be copied to the 404.*
+   * *Note: You only need to edit `index.html`! This project includes an automated GitHub Action that will copy your changes to `404.html` for you.*
 3. **Edit `redirects.json`:** Add your custom paths and destinations here. The file needs to be formatted as a JSON array like this:
 ```json
    [
@@ -33,6 +33,10 @@ To get your own redirector up and running, follow these steps:
    ]
 
 ```
+
+## Automation 🤖
+
+To make life easy, this project already comes with a GitHub Actions workflow attached. Whenever you push changes to `index.html`, this action automatically copies those changes over to `404.html` so you do not have to do it manually.
 
 ## Delays & Styling
 
