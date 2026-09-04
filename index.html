@@ -2,93 +2,61 @@
 <html lang="en">
 <head>
   <title>redirecting...</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-
-  <link
-          rel="icon"
-          type="image/x-icon"
-          href="https://github.com/fonseware/.github/blob/main/fw_favicon.png?raw=true"
-  />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <link rel="icon" type="image/x-icon" href="https://github.com/fonseware/.github/blob/main/fw_favicon.png?raw=true" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-          href="https://fonts.googleapis.com/css2?family=Cabin:wght@400;600&family=Geist:wght@600;800&display=swap"
-          rel="stylesheet"
-  />
+  <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&display=swap" rel="stylesheet" />
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Geist', 'system-ui', 'sans-serif'],
+          },
+          colors: {
+            fwpurple: {
+              400: '#e6b3e6',
+              500: '#cc99cc',
+              600: '#b380b3',
+              800: '#990099',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
   <style>
-    /* background */
     body {
-      font-family: "Cabin", system-ui, sans-serif;
-      background: #000000;
+      background-color: #050505;
+      background-image: radial-gradient(circle at 50% 0%, #1a0f1a 0%, #050505 70%);
+      color: #e2e8f0;
       margin: 0;
       height: 100vh;
       display: flex;
       align-items: center;
       justify-content: center;
-    }
-    /* fake message box */
-    .modal {
-      background: #cc99cc;
-      padding: 24px;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      text-align: center;
-      max-width: 350px;
-      width: 90%;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    /* geist font for the title */
-    h2 {
-      font-family: "Geist", system-ui, sans-serif;
-      margin-top: 0;
-      color: #990099;
-      font-size: 1.3rem;
-      border-radius: 4px;
-    }
-    /* cabin font for the body */
-    p {
-      color: #000000;
-      margin-bottom: 24px;
-      font-size: 0.95rem;
-      line-height: 1.4;
-      border-radius: 4px;
-    }
-
-    /* styling for your image placeholder */
-    .logo-placeholder {
-      display: block;
-      margin-top: 10px;
-      pointer-events: none;
-      border-radius: 8px;
-      padding: 10px;
-      height: 25px;
-    }
-
-    .link {
-      color: #990099;
-      text-decoration: underline;
-      cursor: pointer;
-      font-weight: bolder;
+      overflow: hidden;
     }
 
     /* SLIDING SKELETON LOADING STYLES */
-    .skeleton, .skeleton * {
+    .skeleton {
       color: transparent !important;
       border-color: transparent !important;
-      text-decoration-color: transparent !important; /* Hides the underline on links */
-    }
-
-    .skeleton {
-      background: linear-gradient(90deg, #b380b3 25%, #e6b3e6 50%, #b380b3 75%);
+      text-decoration-color: transparent !important;
+      background: linear-gradient(90deg, #1e1e24 25%, #2a2a35 50%, #1e1e24 75%);
       background-size: 200% 100%;
       animation: skeleton-slide 1.5s infinite linear;
       user-select: none;
       pointer-events: none;
+      border-radius: 0.375rem;
     }
 
-    /* Hide the actual image content while skeleton is active */
     img.skeleton {
       content: url('data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7');
     }
@@ -97,97 +65,214 @@
       0% { background-position: 200% 0; }
       100% { background-position: -200% 0; }
     }
+
+    /* Circular Countdown Animation */
+    .countdown-circle {
+      transition: stroke-dashoffset 1s linear;
+      transform: rotate(-90deg);
+      transform-origin: 50% 50%;
+    }
+    
+    .link-hover {
+      transition: all 0.2s ease-in-out;
+    }
+    .link-hover:hover {
+      color: #e6b3e6;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
   </style>
 </head>
-<body>
-<div class="modal">
-  <h2 class="skeleton" id="redirect-title">redirecting...</h2>
-  <p class="skeleton">please wait while we redirect you to the destination page. if it does not or if you are in a hurry then click the link below.</p>
-  <p class="skeleton"><a class="link" id="manual-link" href="https://fonseware.com">loading destination...</a></p>
-  <a href="https://fonseware.com" style="display: inline-block">
-    <img
-            src="https://github.com/fonseware/.github/blob/main/fw_logo.png?raw=true"
-            alt="fonseware logo"
-            class="logo-placeholder skeleton"/></a>
-</div>
+<body class="antialiased text-sm sm:text-base selection:bg-fwpurple-800 selection:text-white">
 
-<!-- Script moved to body so DOM elements exist when updating the link -->
-<script>
-  const fallbackURL = "https://fonseware.com";
-  const redirectsFile = "./redirects.json";
+  <!-- Main Card Container -->
+  <main class="w-full max-w-md mx-4 p-8 sm:p-10 bg-[#0a0a0a] border border-gray-800 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center text-center relative overflow-hidden">
+    
+    <!-- Top glowing accent -->
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-fwpurple-800 to-transparent opacity-70"></div>
 
-  async function redirectUser() {
-    const url = new URL(window.location.href);
+    <a href="https://fonseware.com" class="block mb-8 transition-transform hover:scale-105 active:scale-95" aria-label="Go to Fonseware">
+      <img
+        src="https://github.com/fonseware/.github/blob/main/fw_logo.png?raw=true"
+        alt="fonseware logo"
+        class="h-8 object-contain skeleton"
+      />
+    </a>
 
-    // Logic: Check for ?u= parameter first, otherwise check the path (like /vod)
-    let key = url.searchParams.get("u") || url.pathname.slice(1);
+    <div id="icon-container" class="mb-6 relative h-20 w-20 flex items-center justify-center">
+      <!-- Loading Spinner (Default) -->
+      <svg id="icon-spinner" class="animate-spin text-fwpurple-800 w-12 h-12 skeleton rounded-full" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+      </svg>
+      
+      <!-- Error Icon (Hidden initially) -->
+      <svg id="icon-error" class="hidden text-red-500 w-14 h-14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+      </svg>
+    </div>
 
-    // Clean up: Remove trailing slash if it exists (e.g. "vod/" -> "vod")
-    if (key && key.endsWith("/")) {
-      key = key.slice(0, -1);
-    }
+    <h2 id="redirect-title" class="text-xl sm:text-2xl font-bold text-gray-100 mb-3 skeleton tracking-tight">redirecting...</h2>
+    
+    <p id="redirect-desc" class="text-gray-400 mb-6 leading-relaxed skeleton max-w-[280px]">
+      please wait while we redirect you to the destination page.
+    </p>
 
-    const titleEl = document.getElementById("redirect-title");
-    const manualLinkEl = document.getElementById("manual-link");
+    <div id="countdown-container" class="hidden flex-col items-center mb-6">
+      <div class="relative w-16 h-16 flex items-center justify-center mb-2">
+        <svg class="absolute w-full h-full" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="none" stroke="#1f2937" stroke-width="6" />
+          <circle id="countdown-progress" class="countdown-circle text-fwpurple-800" cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" stroke-dasharray="283" stroke-dashoffset="0" />
+        </svg>
+        <span id="countdown-text" class="text-xl font-bold text-gray-100">6</span>
+      </div>
+      <span class="text-xs text-gray-500 uppercase tracking-widest font-semibold">seconds</span>
+    </div>
 
-    // Dynamically update the HTML title with the requested key
-    if (key) {
-      titleEl.textContent = `redirecting to "${key}"`;
-    } else {
-      titleEl.textContent = `redirecting to fonseware.com`;
-      manualLinkEl.textContent = `in a hurry? click here to go to ${fallbackURL}`;
-    }
+    <a id="manual-link" href="https://fonseware.com" class="text-fwpurple-500 font-medium skeleton link-hover break-all px-4 py-2 rounded-lg bg-fwpurple-800/10 border border-fwpurple-800/20 w-full mt-2">
+      loading destination...
+    </a>
 
-    // If no key (just visiting fnswe.me), go to main website
-    if (!key) {
-      setTimeout(() => {
-        window.location.replace(fallbackURL);
-      }, 6000); // 6-second delay before redirecting
-      return;
-    }
+    <!-- Custom Alert Box (Replaces window.alert) -->
+    <div id="message-box" class="hidden mt-6 w-full p-4 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium">
+      <!-- Message injected here -->
+    </div>
 
-    try {
-      const res = await fetch(redirectsFile, { cache: "no-store" });
-      const redirects = await res.json();
+  </main>
 
-      const found = redirects.find(
-              (item) => item.id.toLowerCase() === key.toLowerCase(),
-      );
+  <script>
+    const fallbackURL = "https://fonseware.com";
+    const redirectsFile = "./redirects.json";
+    const TOTAL_DELAY_SECONDS = 6;
+    let countdownTimer = null;
 
-      if (found && found.url) {
-        // Update the manual link href and text to show where it points
-        manualLinkEl.href = found.url;
-        manualLinkEl.textContent = `in a hurry? click here to go to ${found.url}`;
+    // Helper to safely update text (lowercase as requested)
+    const setText = (id, text) => {
+      const el = document.getElementById(id);
+      if (el) el.textContent = text.toLowerCase();
+    };
 
-        setTimeout(() => {
-          window.location.replace(found.url);
-        }, 6000); // 6-second delay before redirecting
-      } else {
-        manualLinkEl.textContent = `"${key}" not found, click here to go to ${fallbackURL}`;
-        titleEl.textContent = `uh. oh. destination "${key}" not found`;
-        setTimeout(() => {
-          //alert(`we cannot find where this url "${window.location.href}" was pointing to. but instead we will be redirecting to fonseware.com.`);
-          //window.location.replace(fallbackURL);
-        }, 6000); // 6-second delay before redirecting
+    // Helper to show custom alerts instead of window.alert()
+    const showMessage = (msg, isError = false) => {
+      const msgBox = document.getElementById("message-box");
+      msgBox.textContent = msg.toLowerCase();
+      msgBox.classList.remove("hidden");
+      
+      if (isError) {
+        document.getElementById("icon-spinner").classList.add("hidden");
+        document.getElementById("icon-error").classList.remove("hidden");
       }
-    } catch (err) {
-      console.error("redirect error:", err);
-      manualLinkEl.textContent = `error, pointing to ${fallbackURL}`;
-      alert("hmm... something went wrong. redirecting to fonseware.com.");
-      window.location.replace(fallbackURL);
-    }
-  }
+    };
 
-  // Wait for external assets (fonts, images) to finish downloading, then remove skeleton
-  window.addEventListener("load", () => {
-    document.fonts.ready.then(() => {
-      document.querySelectorAll('.skeleton').forEach(el => {
-        el.classList.remove('skeleton');
-        // Execute redirect logic
-        redirectUser();
+    function startCountdown(targetUrl) {
+      let secondsLeft = TOTAL_DELAY_SECONDS;
+      const countdownContainer = document.getElementById("countdown-container");
+      const countdownText = document.getElementById("countdown-text");
+      const countdownProgress = document.getElementById("countdown-progress");
+      const descEl = document.getElementById("redirect-desc");
+      
+      // Reveal countdown UI
+      countdownContainer.classList.remove("hidden");
+      countdownContainer.classList.add("flex");
+      descEl.classList.add("hidden"); // Hide the static text to clean up UI
+
+      // Calculate stroke dasharray for the SVG circle (2 * PI * 45 = ~283)
+      const circumference = 283;
+
+      countdownTimer = setInterval(() => {
+        secondsLeft--;
+        
+        if (secondsLeft > 0) {
+          countdownText.textContent = secondsLeft;
+          // Update circle progress
+          const offset = circumference - (secondsLeft / TOTAL_DELAY_SECONDS) * circumference;
+          countdownProgress.style.strokeDashoffset = offset;
+        } else {
+          clearInterval(countdownTimer);
+          countdownText.textContent = "0";
+          countdownProgress.style.strokeDashoffset = circumference;
+          // Execute redirect
+          window.location.replace(targetUrl);
+        }
+      }, 1000);
+    }
+
+    async function redirectUser() {
+      const url = new URL(window.location.href);
+
+      // Logic: Check for ?u= parameter first, otherwise check the path (like /vod)
+      let key = url.searchParams.get("u") || url.pathname.slice(1);
+
+      // Clean up: Remove trailing slash if it exists (e.g. "vod/" -> "vod")
+      if (key && key.endsWith("/")) {
+        key = key.slice(0, -1);
+      }
+
+      const manualLinkEl = document.getElementById("manual-link");
+
+      // Dynamically update the HTML title with the requested key
+      if (key) {
+        setText("redirect-title", `redirecting to "${key}"`);
+      } else {
+        setText("redirect-title", `redirecting to fonseware.com`);
+        manualLinkEl.textContent = `in a hurry? click here to go to ${fallbackURL}`;
+      }
+
+      // If no key (just visiting fnswe.me), go to main website
+      if (!key) {
+        startCountdown(fallbackURL);
+        return;
+      }
+
+      try {
+        const res = await fetch(redirectsFile, { cache: "no-store" });
+        const redirects = await res.json();
+
+        const found = redirects.find(
+          (item) => item.id.toLowerCase() === key.toLowerCase()
+        );
+
+        if (found && found.url) {
+          // Update the manual link href and text to show where it points
+          manualLinkEl.href = found.url;
+          manualLinkEl.textContent = `in a hurry? click here to go to ${found.url}`;
+          
+          startCountdown(found.url);
+        } else {
+          // Not found condition
+          manualLinkEl.textContent = `"${key}" not found, click here to go to ${fallbackURL}`;
+          setText("redirect-title", `uh. oh. destination "${key}" not found`);
+          showMessage(`we cannot find where this url was pointing to. redirecting to default.`, true);
+          
+          startCountdown(fallbackURL);
+        }
+      } catch (err) {
+        console.error("redirect error:", err);
+        manualLinkEl.textContent = `error, pointing to ${fallbackURL}`;
+        setText("redirect-title", "system error");
+        showMessage("hmm... something went wrong. redirecting to fonseware.com.", true);
+        
+        startCountdown(fallbackURL);
+      }
+    }
+
+    // Wait for external assets (fonts, images) to finish downloading, then remove skeleton
+    window.addEventListener("load", () => {
+      document.fonts.ready.then(() => {
+        // Small delay to ensure smooth transition and avoid flash of unstyled content
+        setTimeout(() => {
+          document.querySelectorAll('.skeleton').forEach(el => {
+            el.classList.remove('skeleton');
+          });
+          // Remove custom skeleton classes from icon so it spins cleanly
+          const spinner = document.getElementById("icon-spinner");
+          if(spinner) spinner.classList.remove('bg-[length:200%_100%]');
+          
+          // Execute redirect logic
+          redirectUser();
+        }, 300);
       });
     });
-  });
-</script>
+  </script>
 </body>
 </html>
