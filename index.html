@@ -123,19 +123,6 @@
       />
     </a>
 
-    <div id="icon-container" class="mb-6 relative h-20 w-20 flex items-center justify-center">
-      <!-- Loading Spinner (Default) -->
-      <svg id="icon-spinner" class="animate-spin text-fwpurple-800 w-12 h-12 skeleton rounded-full" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-      </svg>
-      
-      <!-- Error Icon (Hidden initially) -->
-      <svg id="icon-error" class="hidden text-red-500 w-14 h-14" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-      </svg>
-    </div>
-
     <h2 id="redirect-title" class="text-xl sm:text-2xl font-bold text-gray-100 mb-3 skeleton tracking-tight">redirecting...</h2>
     
     <p id="redirect-desc" class="text-gray-400 mb-6 leading-relaxed skeleton max-w-[280px]">
@@ -157,7 +144,7 @@
         <button id="cancel-btn" onclick="cancelRedirect()" class="flex-1 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors font-medium text-sm border border-gray-700">
             cancel redirect
         </button>
-        <button id="list-btn" onclick="toggleLinksList()" class="flex-1 px-4 py-2 rounded-lg bg-fwpurple-800/20 hover:bg-fwpurple-800/40 text-fwpurple-400 transition-colors font-medium text-sm border border-fwpurple-800/30">
+        <button id="list-btn" onclick="goToRedirects()" class="hidden flex-1 px-4 py-2 rounded-lg bg-fwpurple-800/20 hover:bg-fwpurple-800/40 text-fwpurple-400 transition-colors font-medium text-sm border border-fwpurple-800/30">
             view all links
         </button>
     </div>
@@ -242,27 +229,22 @@
       const msgBox = document.getElementById("message-box");
       msgBox.textContent = msg.toLowerCase();
       msgBox.classList.remove("hidden");
-      
-      if (isError) {
-        document.getElementById("icon-spinner").classList.add("hidden");
-        document.getElementById("icon-error").classList.remove("hidden");
-      }
     };
 
     function cancelRedirect() {
         if (countdownTimer) {
             clearInterval(countdownTimer);
             isRedirectCancelled = true;
-            document.getElementById("countdown-container").classList.add("opacity-50");
-            document.getElementById("countdown-text").textContent = "paused";
-            setText("redirect-title", "redirect cancelled");
-            document.getElementById("cancel-btn").textContent = "cancelled";
-            document.getElementById("cancel-btn").disabled = true;
-            document.getElementById("cancel-btn").classList.add("opacity-50", "cursor-not-allowed");
             
-            // Revert icon to generic spinner but paused (or stop animation)
-            const spinner = document.getElementById("icon-spinner");
-            if(spinner) spinner.classList.remove("animate-spin");
+            // Hide countdown and cancel button
+            document.getElementById("countdown-container").classList.add("hidden");
+            document.getElementById("countdown-container").classList.remove("flex");
+            document.getElementById("cancel-btn").classList.add("hidden");
+            
+            // Show view links button
+            document.getElementById("list-btn").classList.remove("hidden");
+            
+            setText("redirect-title", "redirect paused");
         }
     }
 
@@ -326,37 +308,9 @@
         renderLinksList();
     }
 
-    async function toggleLinksList() {
-        const container = document.getElementById("links-container");
-        const btn = document.getElementById("list-btn");
-        const isHidden = container.classList.contains("hidden");
-        
-        if (isHidden) {
-            container.classList.remove("hidden");
-            container.classList.add("flex");
-            btn.textContent = "hide links";
-            btn.classList.add("bg-fwpurple-800/40");
-            
-            // Fetch if not already fetched
-            if (allRedirects.length === 0) {
-                 try {
-                    const res = await fetch(redirectsFile, { cache: "no-store" });
-                    allRedirects = await res.json();
-                    document.getElementById("total-links").textContent = `${allRedirects.length} links`;
-                    renderLinksList();
-                } catch(err) {
-                    console.error("failed to load list", err);
-                    document.getElementById("links-list").innerHTML = `<li class="text-red-500 text-sm py-2">failed to load links</li>`;
-                }
-            }
-        } else {
-            container.classList.add("hidden");
-            container.classList.remove("flex");
-            btn.textContent = "view all links";
-            btn.classList.remove("bg-fwpurple-800/40");
-        }
+    function goToRedirects() {
+        window.location.href = "/redirects";
     }
-
 
     function startCountdown(targetUrl) {
       let secondsLeft = TOTAL_DELAY_SECONDS;
@@ -409,6 +363,28 @@
 
       const manualLinkEl = document.getElementById("manual-link");
 
+      // Handle specific /redirects route directly
+      if (key === "redirects") {
+        setText("redirect-title", "available routes");
+        document.getElementById("redirect-desc").classList.add("hidden");
+        manualLinkEl.classList.add("hidden");
+        document.getElementById("action-buttons").classList.add("hidden");
+        
+        try {
+            const res = await fetch(redirectsFile, { cache: "no-store" });
+            allRedirects = await res.json();
+            document.getElementById("total-links").textContent = `${allRedirects.length} links`;
+            document.getElementById("links-container").classList.remove("hidden");
+            document.getElementById("links-container").classList.add("flex");
+            renderLinksList();
+        } catch(err) {
+            console.error("redirect error:", err);
+            setText("redirect-title", "system error");
+            showMessage("failed to load links list.", true);
+        }
+        return;
+      }
+
       // Dynamically update the HTML title with the requested key
       if (key) {
         setText("redirect-title", `redirecting to "${key}"`);
@@ -428,8 +404,6 @@
         const redirects = await res.json();
         
         allRedirects = redirects;
-        document.getElementById("total-links").textContent = `${allRedirects.length} links`;
-        renderLinksList();
 
         const found = redirects.find(
           (item) => item.id.toLowerCase() === key.toLowerCase()
