@@ -115,10 +115,10 @@
     <!-- Top glowing accent -->
     <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-fwpurple-800 to-transparent opacity-70"></div>
 
-    <a href="https://fonseware.com" class="block mb-8 transition-transform hover:scale-105 active:scale-95" aria-label="Go to Fonseware">
+    <a id="logo-link" href="https://fnswe.me" class="block mb-8 transition-transform hover:scale-105 active:scale-95" aria-label="Go to domain">
       <img
         src="https://github.com/fonseware/.github/blob/main/fw_logo.png?raw=true"
-        alt="fonseware logo"
+        alt="logo"
         class="h-8 object-contain skeleton"
       />
     </a>
@@ -180,11 +180,6 @@
       loading destination...
     </a>
 
-    <!-- Custom Alert Box (Replaces window.alert) -->
-    <div id="message-box" class="hidden mt-6 w-full p-4 bg-red-900/20 border border-red-500/30 rounded-lg text-red-400 text-sm font-medium">
-      <!-- Message injected here -->
-    </div>
-
   </main>
 
   <p class="mt-8 text-center text-xs text-gray-600 max-w-sm mx-4 opacity-80 hover:opacity-100 transition-opacity">
@@ -214,11 +209,13 @@
   </style>
 
   <script>
-    const fallbackURL = "https://fonseware.com";
-    const redirectsFile = "./redirects.json";
+    // Constants config for users forking the project
+    const HOST_DOMAIN = "https://fnswe.me"; // The root domain where this redirector lives
+    const FALLBACK_URL = "https://fonseware.com"; // The default redirect if no key is found
+    const REDIRECTS_FILE = "./redirects.json";
     const TOTAL_DELAY_SECONDS = 6;
-    let countdownTimer = null;
     
+    let countdownTimer = null;
     let allRedirects = [];
     let currentPage = 1;
     const itemsPerPage = 6;
@@ -230,24 +227,18 @@
       if (el) el.textContent = text.toLowerCase();
     };
 
-    // Helper to show custom alerts instead of window.alert()
-    const showMessage = (msg, isError = false) => {
-      const msgBox = document.getElementById("message-box");
-      msgBox.textContent = msg.toLowerCase();
-      msgBox.classList.remove("hidden");
-    };
-
     function cancelRedirect() {
         if (countdownTimer) {
             clearInterval(countdownTimer);
             isRedirectCancelled = true;
             
-            // Hide countdown and cancel button
+            // Hide countdown and cancel button completely
             document.getElementById("countdown-container").classList.add("hidden");
             document.getElementById("countdown-container").classList.remove("flex");
             document.getElementById("cancel-btn").classList.add("hidden");
+            document.getElementById("action-buttons").classList.remove("sm:flex-row");
             
-            // Show view links button
+            // Show view links button standalone
             document.getElementById("list-btn").classList.remove("hidden");
             
             setText("redirect-title", "redirect paused");
@@ -377,7 +368,7 @@
         document.getElementById("action-buttons").classList.add("hidden");
         
         try {
-            const res = await fetch(redirectsFile, { cache: "no-store" });
+            const res = await fetch(REDIRECTS_FILE, { cache: "no-store" });
             allRedirects = await res.json();
             document.getElementById("total-links").textContent = `${allRedirects.length} links`;
             document.getElementById("links-container").classList.remove("hidden");
@@ -385,8 +376,7 @@
             renderLinksList();
         } catch(err) {
             console.error("redirect error:", err);
-            setText("redirect-title", "system error");
-            showMessage("failed to load links list.", true);
+            setText("redirect-title", "system error loading links");
         }
         return;
       }
@@ -395,18 +385,18 @@
       if (key) {
         setText("redirect-title", `redirecting to "${key}"`);
       } else {
-        setText("redirect-title", `redirecting to fonseware.com`);
-        manualLinkEl.textContent = `in a hurry? click here to go to ${fallbackURL}`;
+        setText("redirect-title", `redirecting to default domain`);
+        manualLinkEl.textContent = `in a hurry? click here to go to ${FALLBACK_URL}`;
       }
 
       // If no key (just visiting fnswe.me), go to main website
       if (!key) {
-        startCountdown(fallbackURL);
+        startCountdown(FALLBACK_URL);
         return;
       }
 
       try {
-        const res = await fetch(redirectsFile, { cache: "no-store" });
+        const res = await fetch(REDIRECTS_FILE, { cache: "no-store" });
         const redirects = await res.json();
         
         allRedirects = redirects;
@@ -423,33 +413,32 @@
           startCountdown(found.url);
         } else {
           // Not found condition
-          manualLinkEl.textContent = `"${key}" not found, click here to go to ${fallbackURL}`;
+          manualLinkEl.textContent = `"${key}" not found, click here to go to ${FALLBACK_URL}`;
           setText("redirect-title", `uh. oh. destination "${key}" not found`);
-          showMessage(`we cannot find where this url was pointing to. redirecting to default.`, true);
           
-          startCountdown(fallbackURL);
+          startCountdown(FALLBACK_URL);
         }
       } catch (err) {
         console.error("redirect error:", err);
-        manualLinkEl.textContent = `error, pointing to ${fallbackURL}`;
+        manualLinkEl.textContent = `error, pointing to ${FALLBACK_URL}`;
         setText("redirect-title", "system error");
-        showMessage("hmm... something went wrong. redirecting to fonseware.com.", true);
         
-        startCountdown(fallbackURL);
+        startCountdown(FALLBACK_URL);
       }
     }
 
     // Wait for external assets (fonts, images) to finish downloading, then remove skeleton
     window.addEventListener("load", () => {
+      // Wire up the dynamic root host link to the logo
+      const logoLink = document.getElementById("logo-link");
+      if(logoLink) logoLink.href = HOST_DOMAIN;
+
       document.fonts.ready.then(() => {
         // Small delay to ensure smooth transition and avoid flash of unstyled content
         setTimeout(() => {
           document.querySelectorAll('.skeleton').forEach(el => {
             el.classList.remove('skeleton');
           });
-          // Remove custom skeleton classes from icon so it spins cleanly
-          const spinner = document.getElementById("icon-spinner");
-          if(spinner) spinner.classList.remove('bg-[length:200%_100%]');
           
           // Execute redirect logic
           redirectUser();
