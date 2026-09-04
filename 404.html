@@ -37,11 +37,35 @@
       background-image: radial-gradient(circle at 50% 0%, #1a0f1a 0%, #050505 70%);
       color: #e2e8f0;
       margin: 0;
-      height: 100vh;
+      min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      overflow-x: hidden;
+      overflow-y: auto;
+      padding: 2rem 0;
+      box-sizing: border-box;
+    }
+
+    /* Global scrollbar for webkit & firefox */
+    :root {
+      scrollbar-width: thin;
+      scrollbar-color: #333333 #050505;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #050505;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #333333;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #555555;
     }
 
     /* SLIDING SKELETON LOADING STYLES */
@@ -175,6 +199,11 @@
   </p>
 
   <style>
+      /* Specific scrollbar for the links list */
+      .custom-scrollbar {
+          scrollbar-width: thin;
+          scrollbar-color: #333 #111;
+      }
       .custom-scrollbar::-webkit-scrollbar {
           width: 4px;
       }
