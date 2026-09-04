@@ -129,6 +129,36 @@
       <span class="text-xs text-gray-500 uppercase tracking-widest font-semibold">seconds</span>
     </div>
 
+    <div id="action-buttons" class="hidden w-full flex-col sm:flex-row gap-3 mt-4 mb-2">
+        <button id="cancel-btn" onclick="cancelRedirect()" class="flex-1 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors font-medium text-sm border border-gray-700">
+            cancel redirect
+        </button>
+        <button id="list-btn" onclick="toggleLinksList()" class="flex-1 px-4 py-2 rounded-lg bg-fwpurple-800/20 hover:bg-fwpurple-800/40 text-fwpurple-400 transition-colors font-medium text-sm border border-fwpurple-800/30">
+            view all links
+        </button>
+    </div>
+
+    <div id="links-container" class="hidden w-full mt-4 flex-col text-left">
+        <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3">
+            <h3 class="text-gray-300 font-semibold">available routes</h3>
+            <span id="total-links" class="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full">0 links</span>
+        </div>
+        
+        <ul id="links-list" class="space-y-2 mb-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
+            <!-- List items injected via JS -->
+        </ul>
+
+        <div class="flex items-center justify-between pt-3 border-t border-gray-800">
+            <button id="prev-page" onclick="changePage(-1)" class="p-2 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            </button>
+            <span id="page-indicator" class="text-xs text-gray-500 font-medium">page 1 / 1</span>
+            <button id="next-page" onclick="changePage(1)" class="p-2 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </button>
+        </div>
+    </div>
+
     <a id="manual-link" href="https://fonseware.com" class="text-fwpurple-500 font-medium skeleton link-hover break-all px-4 py-2 rounded-lg bg-fwpurple-800/10 border border-fwpurple-800/20 w-full mt-2">
       loading destination...
     </a>
@@ -140,11 +170,37 @@
 
   </main>
 
+  <p class="mt-8 text-center text-xs text-gray-600 max-w-sm mx-4 opacity-80 hover:opacity-100 transition-opacity">
+    this project is open source. fork it and make your own redirector on <a href="https://github.com/fonseware/fnswe.me/" target="_blank" rel="noopener noreferrer" class="text-fwpurple-600 hover:text-fwpurple-400 underline decoration-fwpurple-800/50 underline-offset-4">github</a>.
+  </p>
+
+  <style>
+      .custom-scrollbar::-webkit-scrollbar {
+          width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+          background: #111;
+          border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #333;
+          border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #555;
+      }
+  </style>
+
   <script>
     const fallbackURL = "https://fonseware.com";
     const redirectsFile = "./redirects.json";
     const TOTAL_DELAY_SECONDS = 6;
     let countdownTimer = null;
+    
+    let allRedirects = [];
+    let currentPage = 1;
+    const itemsPerPage = 6;
+    let isRedirectCancelled = false;
 
     // Helper to safely update text (lowercase as requested)
     const setText = (id, text) => {
@@ -164,16 +220,128 @@
       }
     };
 
+    function cancelRedirect() {
+        if (countdownTimer) {
+            clearInterval(countdownTimer);
+            isRedirectCancelled = true;
+            document.getElementById("countdown-container").classList.add("opacity-50");
+            document.getElementById("countdown-text").textContent = "paused";
+            setText("redirect-title", "redirect cancelled");
+            document.getElementById("cancel-btn").textContent = "cancelled";
+            document.getElementById("cancel-btn").disabled = true;
+            document.getElementById("cancel-btn").classList.add("opacity-50", "cursor-not-allowed");
+            
+            // Revert icon to generic spinner but paused (or stop animation)
+            const spinner = document.getElementById("icon-spinner");
+            if(spinner) spinner.classList.remove("animate-spin");
+        }
+    }
+
+    function renderLinksList() {
+        const startIndex = (currentPage - 1) * itemsPerPage;
+        const endIndex = startIndex + itemsPerPage;
+        const currentItems = allRedirects.slice(startIndex, endIndex);
+        const listEl = document.getElementById("links-list");
+        
+        listEl.innerHTML = "";
+        
+        if (currentItems.length === 0) {
+            listEl.innerHTML = `<li class="text-gray-500 text-sm py-2 text-center italic">no links available</li>`;
+        } else {
+            currentItems.forEach(item => {
+                const li = document.createElement("li");
+                li.className = "bg-[#111] border border-gray-800 rounded-md p-3 hover:border-fwpurple-800/50 transition-colors group relative overflow-hidden";
+                
+                // Constructing the item content
+                li.innerHTML = `
+                    <div class="flex justify-between items-start">
+                        <div class="truncate pr-4">
+                            <div class="font-medium text-gray-200 text-sm mb-1 group-hover:text-fwpurple-400 transition-colors">/${item.id}</div>
+                            <div class="text-xs text-gray-500 truncate" title="${item.url}">${item.url.replace(/^https?:\/\//, '')}</div>
+                        </div>
+                        <a href="${item.url}" class="shrink-0 bg-gray-800 p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-fwpurple-800 transition-all z-10" aria-label="Go to ${item.id}">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
+                        </a>
+                    </div>
+                `;
+                
+                // Add click event to whole row (except if they click the specific arrow anchor)
+                li.addEventListener('click', (e) => {
+                   if(e.target.closest('a')) return;
+                   window.location.href = item.url;
+                });
+                li.style.cursor = 'pointer';
+                
+                listEl.appendChild(li);
+            });
+        }
+
+        updatePaginationControls();
+    }
+
+    function updatePaginationControls() {
+        const totalPages = Math.ceil(allRedirects.length / itemsPerPage) || 1;
+        document.getElementById("page-indicator").textContent = `page ${currentPage} / ${totalPages}`;
+        
+        document.getElementById("prev-page").disabled = currentPage <= 1;
+        document.getElementById("next-page").disabled = currentPage >= totalPages;
+    }
+
+    function changePage(delta) {
+        const totalPages = Math.ceil(allRedirects.length / itemsPerPage);
+        currentPage += delta;
+        
+        if (currentPage < 1) currentPage = 1;
+        if (currentPage > totalPages) currentPage = totalPages;
+        
+        renderLinksList();
+    }
+
+    async function toggleLinksList() {
+        const container = document.getElementById("links-container");
+        const btn = document.getElementById("list-btn");
+        const isHidden = container.classList.contains("hidden");
+        
+        if (isHidden) {
+            container.classList.remove("hidden");
+            container.classList.add("flex");
+            btn.textContent = "hide links";
+            btn.classList.add("bg-fwpurple-800/40");
+            
+            // Fetch if not already fetched
+            if (allRedirects.length === 0) {
+                 try {
+                    const res = await fetch(redirectsFile, { cache: "no-store" });
+                    allRedirects = await res.json();
+                    document.getElementById("total-links").textContent = `${allRedirects.length} links`;
+                    renderLinksList();
+                } catch(err) {
+                    console.error("failed to load list", err);
+                    document.getElementById("links-list").innerHTML = `<li class="text-red-500 text-sm py-2">failed to load links</li>`;
+                }
+            }
+        } else {
+            container.classList.add("hidden");
+            container.classList.remove("flex");
+            btn.textContent = "view all links";
+            btn.classList.remove("bg-fwpurple-800/40");
+        }
+    }
+
+
     function startCountdown(targetUrl) {
       let secondsLeft = TOTAL_DELAY_SECONDS;
       const countdownContainer = document.getElementById("countdown-container");
       const countdownText = document.getElementById("countdown-text");
       const countdownProgress = document.getElementById("countdown-progress");
       const descEl = document.getElementById("redirect-desc");
+      const actionBtns = document.getElementById("action-buttons");
       
-      // Reveal countdown UI
+      // Reveal countdown UI and actions
       countdownContainer.classList.remove("hidden");
       countdownContainer.classList.add("flex");
+      actionBtns.classList.remove("hidden");
+      actionBtns.classList.add("flex");
       descEl.classList.add("hidden"); // Hide the static text to clean up UI
 
       // Calculate stroke dasharray for the SVG circle (2 * PI * 45 = ~283)
@@ -189,10 +357,12 @@
           countdownProgress.style.strokeDashoffset = offset;
         } else {
           clearInterval(countdownTimer);
-          countdownText.textContent = "0";
-          countdownProgress.style.strokeDashoffset = circumference;
-          // Execute redirect
-          window.location.replace(targetUrl);
+          if(!isRedirectCancelled) {
+              countdownText.textContent = "0";
+              countdownProgress.style.strokeDashoffset = circumference;
+              // Execute redirect
+              window.location.replace(targetUrl);
+          }
         }
       }, 1000);
     }
@@ -227,6 +397,10 @@
       try {
         const res = await fetch(redirectsFile, { cache: "no-store" });
         const redirects = await res.json();
+        
+        allRedirects = redirects;
+        document.getElementById("total-links").textContent = `${allRedirects.length} links`;
+        renderLinksList();
 
         const found = redirects.find(
           (item) => item.id.toLowerCase() === key.toLowerCase()
