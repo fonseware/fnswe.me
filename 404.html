@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   
-  <link rel="icon" type="image/x-icon" href="https://github.com/fonseware/.github/blob/main/fw_favicon.png?raw=true" />
+  <link id="dynamic-favicon" rel="icon" type="image/x-icon" href="" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;800&display=swap" rel="stylesheet" />
@@ -19,11 +19,11 @@
             sans: ['Geist', 'system-ui', 'sans-serif'],
           },
           colors: {
-            fwpurple: {
-              400: '#e6b3e6',
-              500: '#cc99cc',
-              600: '#b380b3',
-              800: '#990099',
+            primary: {
+              400: 'var(--color-primary-400)',
+              500: 'var(--color-primary-500)',
+              600: 'var(--color-primary-600)',
+              800: 'var(--color-primary-800)',
             }
           }
         }
@@ -32,6 +32,19 @@
   </script>
 
   <style>
+    :root {
+      /* ==========================================
+         STYLE CONFIGURATION (Edit these colors)
+         ========================================== */
+      --color-primary-400: #e6b3e6;
+      --color-primary-500: #cc99cc;
+      --color-primary-600: #b380b3;
+      --color-primary-800: #990099;
+      
+      scrollbar-width: thin;
+      scrollbar-color: #333333 #050505;
+    }
+
     body {
       background-color: #050505;
       background-image: radial-gradient(circle at 50% 0%, #1a0f1a 0%, #050505 70%);
@@ -48,25 +61,10 @@
       box-sizing: border-box;
     }
 
-    /* Global scrollbar for webkit & firefox */
-    :root {
-      scrollbar-width: thin;
-      scrollbar-color: #333333 #050505;
-    }
-    ::-webkit-scrollbar {
-      width: 8px;
-      height: 8px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #050505;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #333333;
-      border-radius: 4px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #555555;
-    }
+    ::-webkit-scrollbar { width: 8px; height: 8px; }
+    ::-webkit-scrollbar-track { background: #050505; }
+    ::-webkit-scrollbar-thumb { background: #333333; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: #555555; }
 
     /* SLIDING SKELETON LOADING STYLES */
     .skeleton {
@@ -97,27 +95,36 @@
       transform-origin: 50% 50%;
     }
     
-    .link-hover {
-      transition: all 0.2s ease-in-out;
-    }
+    .link-hover { transition: all 0.2s ease-in-out; }
     .link-hover:hover {
-      color: #e6b3e6;
+      color: var(--color-primary-400);
       text-decoration: underline;
       text-underline-offset: 4px;
     }
+
+    /* Specific scrollbar for the links list */
+    .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #333 #111;
+    }
+    .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: #111; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #555; }
   </style>
 </head>
-<body class="antialiased text-sm sm:text-base selection:bg-fwpurple-800 selection:text-white">
+<body class="antialiased text-sm sm:text-base selection:bg-primary-800 selection:text-white">
 
   <!-- Main Card Container -->
   <main class="w-full max-w-md mx-4 p-8 sm:p-10 bg-[#0a0a0a] border border-gray-800 rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col items-center text-center relative overflow-hidden">
     
     <!-- Top glowing accent -->
-    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-fwpurple-800 to-transparent opacity-70"></div>
+    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-primary-800 to-transparent opacity-70"></div>
 
-    <a id="logo-link" href="https://fnswe.me" class="block mb-8 transition-transform hover:scale-105 active:scale-95" aria-label="Go to domain">
+    <a id="logo-link" href="#" class="block mb-8 transition-transform hover:scale-105 active:scale-95" aria-label="Go to domain">
       <img
-        src="https://github.com/fonseware/.github/blob/main/fw_logo.png?raw=true"
+        id="logo-img"
+        src=""
         alt="logo"
         class="h-8 object-contain skeleton"
       />
@@ -126,39 +133,39 @@
     <h2 id="redirect-title" class="text-xl sm:text-2xl font-bold text-gray-100 mb-3 skeleton tracking-tight">redirecting...</h2>
     
     <p id="redirect-desc" class="text-gray-400 mb-6 leading-relaxed skeleton max-w-[280px]">
-      please wait while we redirect you to the destination page.
+      <!-- Populated via JS Config -->
     </p>
 
     <div id="countdown-container" class="hidden flex-col items-center mb-6">
       <div class="relative w-16 h-16 flex items-center justify-center mb-2">
         <svg class="absolute w-full h-full" viewBox="0 0 100 100">
           <circle cx="50" cy="50" r="45" fill="none" stroke="#1f2937" stroke-width="6" />
-          <circle id="countdown-progress" class="countdown-circle text-fwpurple-800" cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" stroke-dasharray="283" stroke-dashoffset="0" />
+          <circle id="countdown-progress" class="countdown-circle text-primary-800" cx="50" cy="50" r="45" fill="none" stroke="currentColor" stroke-width="6" stroke-dasharray="283" stroke-dashoffset="0" />
         </svg>
-        <span id="countdown-text" class="text-xl font-bold text-gray-100">6</span>
+        <span id="countdown-text" class="text-xl font-bold text-gray-100"></span>
       </div>
-      <span class="text-xs text-gray-500 uppercase tracking-widest font-semibold">seconds</span>
+      <span id="seconds-label" class="text-xs text-gray-500 uppercase tracking-widest font-semibold"></span>
     </div>
 
     <div id="action-buttons" class="hidden w-full flex-col sm:flex-row gap-3 mt-4 mb-2">
         <button id="cancel-btn" onclick="cancelRedirect()" class="flex-1 px-4 py-2 rounded-lg bg-gray-800 hover:bg-gray-700 text-gray-300 transition-colors font-medium text-sm border border-gray-700">
             <div class="flex items-center justify-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                cancel redirect
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                <span id="cancel-btn-text"></span>
             </div>
         </button>
-        <button id="list-btn" onclick="goToRedirects()" class="hidden flex-1 px-4 py-2 rounded-lg bg-fwpurple-800/20 hover:bg-fwpurple-800/40 text-fwpurple-400 transition-colors font-medium text-sm border border-fwpurple-800/30">
+        <button id="list-btn" onclick="goToRedirects()" class="hidden flex-1 px-4 py-2 rounded-lg bg-primary-800/20 hover:bg-primary-800/40 text-primary-400 transition-colors font-medium text-sm border border-primary-800/30">
             <div class="flex items-center justify-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
-                view all links
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                <span id="list-btn-text"></span>
             </div>
         </button>
     </div>
 
     <div id="links-container" class="hidden w-full mt-4 flex-col text-left">
         <div class="flex items-center justify-between border-b border-gray-800 pb-2 mb-3">
-            <h3 class="text-gray-300 font-semibold">available routes</h3>
-            <span id="total-links" class="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full">0 links</span>
+            <h3 id="routes-title" class="text-gray-300 font-semibold"></h3>
+            <span id="total-links" class="text-xs text-gray-500 bg-gray-800 px-2 py-1 rounded-full"></span>
         </div>
         
         <ul id="links-list" class="space-y-2 mb-4 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar">
@@ -169,59 +176,62 @@
             <button id="prev-page" onclick="changePage(-1)" class="p-2 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
             </button>
-            <span id="page-indicator" class="text-xs text-gray-500 font-medium">page 1 / 1</span>
+            <span id="page-indicator" class="text-xs text-gray-500 font-medium"></span>
             <button id="next-page" onclick="changePage(1)" class="p-2 rounded-md bg-gray-800 hover:bg-gray-700 text-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors" disabled>
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
             </button>
         </div>
     </div>
 
-    <a id="manual-link" href="https://fonseware.com" class="text-fwpurple-500 font-medium skeleton link-hover break-all px-4 py-2 rounded-lg bg-fwpurple-800/10 border border-fwpurple-800/20 w-full mt-2">
+    <a id="manual-link" href="#" class="text-primary-500 font-medium skeleton link-hover break-all px-4 py-2 rounded-lg bg-primary-800/10 border border-primary-800/20 w-full mt-2">
       loading destination...
     </a>
 
   </main>
 
   <p class="mt-8 text-center text-xs text-gray-600 max-w-sm mx-4 opacity-80 hover:opacity-100 transition-opacity">
-    this project is open source. fork it and make your own redirector on <a href="https://github.com/fonseware/fnswe.me/" target="_blank" rel="noopener noreferrer" class="text-fwpurple-600 hover:text-fwpurple-400 underline decoration-fwpurple-800/50 underline-offset-4">github</a>.
+    this project is open source. fork it and make your own redirector on <a href="https://github.com/fonseware/fnswe.me/" target="_blank" rel="noopener noreferrer" class="text-primary-600 hover:text-primary-400 underline decoration-primary-800/50 underline-offset-4">github</a>.
   </p>
 
-  <style>
-      /* Specific scrollbar for the links list */
-      .custom-scrollbar {
-          scrollbar-width: thin;
-          scrollbar-color: #333 #111;
-      }
-      .custom-scrollbar::-webkit-scrollbar {
-          width: 4px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-track {
-          background: #111;
-          border-radius: 4px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #333;
-          border-radius: 4px;
-      }
-      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #555;
-      }
-  </style>
-
   <script>
-    // Constants config for users forking the project
-    const HOST_DOMAIN = "https://fnswe.me"; // The root domain where this redirector lives
-    const FALLBACK_URL = "https://fonseware.com"; // The default redirect if no key is found
-    const REDIRECTS_FILE = "./redirects.json";
-    const TOTAL_DELAY_SECONDS = 6;
-    
+    // ==========================================
+    // JS CONFIGURATION (Edit these for your fork)
+    // ==========================================
+    const CONFIG = {
+      // Domains & URLs
+      HOST_DOMAIN: "https://fnswe.me",
+      FALLBACK_URL: "https://fonseware.com",
+      REDIRECTS_FILE: "./redirects.json",
+      LOGO_URL: "https://github.com/fonseware/.github/blob/main/fw_logo.png?raw=true",
+      FAVICON_URL: "https://github.com/fonseware/.github/blob/main/fw_favicon.png?raw=true",
+      
+      // Timings
+      TOTAL_DELAY_SECONDS: 6,
+      
+      // Display Strings (Keep lowercase for aesthetic)
+      TXT_DESC: "please wait while we redirect you to the destination page.",
+      TXT_REDIRECTING: "redirecting to",
+      TXT_DEFAULT_DOMAIN: "default domain",
+      TXT_NOT_FOUND: "uh. oh. destination not found",
+      TXT_ERROR: "system error",
+      TXT_PAUSED: "redirect paused",
+      TXT_IN_A_HURRY: "in a hurry? click here to go to",
+      TXT_ROUTES_TITLE: "available routes",
+      TXT_LINKS: "links",
+      TXT_NO_LINKS: "no links available",
+      TXT_CANCEL: "cancel redirect",
+      TXT_VIEW_LINKS: "view all links",
+      TXT_SECONDS: "seconds",
+      TXT_PAGE: "page"
+    };
+
     let countdownTimer = null;
     let allRedirects = [];
     let currentPage = 1;
     const itemsPerPage = 6;
     let isRedirectCancelled = false;
 
-    // Helper to safely update text (lowercase as requested)
+    // Helper to safely update text
     const setText = (id, text) => {
       const el = document.getElementById(id);
       if (el) el.textContent = text.toLowerCase();
@@ -241,7 +251,7 @@
             // Show view links button standalone
             document.getElementById("list-btn").classList.remove("hidden");
             
-            setText("redirect-title", "redirect paused");
+            setText("redirect-title", CONFIG.TXT_PAUSED);
         }
     }
 
@@ -254,20 +264,22 @@
         listEl.innerHTML = "";
         
         if (currentItems.length === 0) {
-            listEl.innerHTML = `<li class="text-gray-500 text-sm py-2 text-center italic">no links available</li>`;
+            listEl.innerHTML = `<li class="text-gray-500 text-sm py-2 text-center italic">${CONFIG.TXT_NO_LINKS}</li>`;
         } else {
             currentItems.forEach(item => {
                 const li = document.createElement("li");
-                li.className = "bg-[#111] border border-gray-800 rounded-md p-3 hover:border-fwpurple-800/50 transition-colors group relative overflow-hidden";
+                li.className = "bg-[#111] border border-gray-800 rounded-md p-3 hover:border-primary-800/50 transition-colors group relative overflow-hidden";
                 
-                // Constructing the item content
+                // Construct internal redirect path, enforcing a loop back into this processor
+                const redirectPath = `${CONFIG.HOST_DOMAIN}/${item.id}`;
+                
                 li.innerHTML = `
                     <div class="flex justify-between items-start">
                         <div class="truncate pr-4">
-                            <div class="font-medium text-gray-200 text-sm mb-1 group-hover:text-fwpurple-400 transition-colors">/${item.id}</div>
+                            <div class="font-medium text-gray-200 text-sm mb-1 group-hover:text-primary-400 transition-colors">/${item.id}</div>
                             <div class="text-xs text-gray-500 truncate" title="${item.url}">${item.url.replace(/^https?:\/\//, '')}</div>
                         </div>
-                        <a href="${item.url}" class="shrink-0 bg-gray-800 p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-fwpurple-800 transition-all z-10" aria-label="Go to ${item.id}">
+                        <a href="${redirectPath}" class="shrink-0 bg-gray-800 p-1.5 rounded-md text-gray-400 hover:text-white hover:bg-primary-800 transition-all z-10" aria-label="Go to ${item.id}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"></path></svg>
                         </a>
                     </div>
@@ -276,7 +288,7 @@
                 // Add click event to whole row (except if they click the specific arrow anchor)
                 li.addEventListener('click', (e) => {
                    if(e.target.closest('a')) return;
-                   window.location.href = item.url;
+                   window.location.href = redirectPath;
                 });
                 li.style.cursor = 'pointer';
                 
@@ -289,7 +301,7 @@
 
     function updatePaginationControls() {
         const totalPages = Math.ceil(allRedirects.length / itemsPerPage) || 1;
-        document.getElementById("page-indicator").textContent = `page ${currentPage} / ${totalPages}`;
+        document.getElementById("page-indicator").textContent = `${CONFIG.TXT_PAGE} ${currentPage} / ${totalPages}`;
         
         document.getElementById("prev-page").disabled = currentPage <= 1;
         document.getElementById("next-page").disabled = currentPage >= totalPages;
@@ -306,11 +318,11 @@
     }
 
     function goToRedirects() {
-        window.location.href = "/redirects";
+        window.location.href = `${CONFIG.HOST_DOMAIN}/redirects`;
     }
 
     function startCountdown(targetUrl) {
-      let secondsLeft = TOTAL_DELAY_SECONDS;
+      let secondsLeft = CONFIG.TOTAL_DELAY_SECONDS;
       const countdownContainer = document.getElementById("countdown-container");
       const countdownText = document.getElementById("countdown-text");
       const countdownProgress = document.getElementById("countdown-progress");
@@ -324,6 +336,8 @@
       actionBtns.classList.add("flex");
       descEl.classList.add("hidden"); // Hide the static text to clean up UI
 
+      countdownText.textContent = secondsLeft;
+
       // Calculate stroke dasharray for the SVG circle (2 * PI * 45 = ~283)
       const circumference = 283;
 
@@ -333,7 +347,7 @@
         if (secondsLeft > 0) {
           countdownText.textContent = secondsLeft;
           // Update circle progress
-          const offset = circumference - (secondsLeft / TOTAL_DELAY_SECONDS) * circumference;
+          const offset = circumference - (secondsLeft / CONFIG.TOTAL_DELAY_SECONDS) * circumference;
           countdownProgress.style.strokeDashoffset = offset;
         } else {
           clearInterval(countdownTimer);
@@ -350,53 +364,49 @@
     async function redirectUser() {
       const url = new URL(window.location.href);
 
-      // Logic: Check for ?u= parameter first, otherwise check the path (like /vod)
+      // Logic: Check for ?u= parameter first, otherwise check the path
       let key = url.searchParams.get("u") || url.pathname.slice(1);
-
-      // Clean up: Remove trailing slash if it exists (e.g. "vod/" -> "vod")
-      if (key && key.endsWith("/")) {
-        key = key.slice(0, -1);
-      }
+      if (key && key.endsWith("/")) key = key.slice(0, -1);
 
       const manualLinkEl = document.getElementById("manual-link");
 
       // Handle specific /redirects route directly
       if (key === "redirects") {
-        setText("redirect-title", "available routes");
+        setText("redirect-title", CONFIG.TXT_ROUTES_TITLE);
         document.getElementById("redirect-desc").classList.add("hidden");
         manualLinkEl.classList.add("hidden");
         document.getElementById("action-buttons").classList.add("hidden");
         
         try {
-            const res = await fetch(REDIRECTS_FILE, { cache: "no-store" });
+            const res = await fetch(CONFIG.REDIRECTS_FILE, { cache: "no-store" });
             allRedirects = await res.json();
-            document.getElementById("total-links").textContent = `${allRedirects.length} links`;
+            document.getElementById("total-links").textContent = `${allRedirects.length} ${CONFIG.TXT_LINKS}`;
             document.getElementById("links-container").classList.remove("hidden");
             document.getElementById("links-container").classList.add("flex");
             renderLinksList();
         } catch(err) {
             console.error("redirect error:", err);
-            setText("redirect-title", "system error loading links");
+            setText("redirect-title", CONFIG.TXT_ERROR);
         }
         return;
       }
 
       // Dynamically update the HTML title with the requested key
       if (key) {
-        setText("redirect-title", `redirecting to "${key}"`);
+        setText("redirect-title", `${CONFIG.TXT_REDIRECTING} "${key}"`);
       } else {
-        setText("redirect-title", `redirecting to default domain`);
-        manualLinkEl.textContent = `in a hurry? click here to go to ${FALLBACK_URL}`;
+        setText("redirect-title", `${CONFIG.TXT_REDIRECTING} ${CONFIG.TXT_DEFAULT_DOMAIN}`);
+        manualLinkEl.textContent = `${CONFIG.TXT_IN_A_HURRY} ${CONFIG.FALLBACK_URL}`;
       }
 
       // If no key (just visiting fnswe.me), go to main website
       if (!key) {
-        startCountdown(FALLBACK_URL);
+        startCountdown(CONFIG.FALLBACK_URL);
         return;
       }
 
       try {
-        const res = await fetch(REDIRECTS_FILE, { cache: "no-store" });
+        const res = await fetch(CONFIG.REDIRECTS_FILE, { cache: "no-store" });
         const redirects = await res.json();
         
         allRedirects = redirects;
@@ -408,39 +418,44 @@
         if (found && found.url) {
           // Update the manual link href and text to show where it points
           manualLinkEl.href = found.url;
-          manualLinkEl.textContent = `in a hurry? click here to go to ${found.url}`;
+          manualLinkEl.textContent = `${CONFIG.TXT_IN_A_HURRY} ${found.url}`;
           
           startCountdown(found.url);
         } else {
           // Not found condition
-          manualLinkEl.textContent = `"${key}" not found, click here to go to ${FALLBACK_URL}`;
-          setText("redirect-title", `uh. oh. destination "${key}" not found`);
+          manualLinkEl.textContent = `"${key}" not found, click here to go to ${CONFIG.FALLBACK_URL}`;
+          setText("redirect-title", CONFIG.TXT_NOT_FOUND);
           
-          startCountdown(FALLBACK_URL);
+          startCountdown(CONFIG.FALLBACK_URL);
         }
       } catch (err) {
         console.error("redirect error:", err);
-        manualLinkEl.textContent = `error, pointing to ${FALLBACK_URL}`;
-        setText("redirect-title", "system error");
+        manualLinkEl.textContent = `error, pointing to ${CONFIG.FALLBACK_URL}`;
+        setText("redirect-title", CONFIG.TXT_ERROR);
         
-        startCountdown(FALLBACK_URL);
+        startCountdown(CONFIG.FALLBACK_URL);
       }
     }
 
-    // Wait for external assets (fonts, images) to finish downloading, then remove skeleton
     window.addEventListener("load", () => {
-      // Wire up the dynamic root host link to the logo
-      const logoLink = document.getElementById("logo-link");
-      if(logoLink) logoLink.href = HOST_DOMAIN;
+      // 1. Apply configurations to the DOM immediately
+      document.getElementById("dynamic-favicon").href = CONFIG.FAVICON_URL;
+      document.getElementById("logo-img").src = CONFIG.LOGO_URL;
+      document.getElementById("logo-link").href = CONFIG.HOST_DOMAIN;
+      
+      document.getElementById("redirect-desc").textContent = CONFIG.TXT_DESC;
+      document.getElementById("cancel-btn-text").textContent = CONFIG.TXT_CANCEL;
+      document.getElementById("list-btn-text").textContent = CONFIG.TXT_VIEW_LINKS;
+      document.getElementById("seconds-label").textContent = CONFIG.TXT_SECONDS;
+      document.getElementById("routes-title").textContent = CONFIG.TXT_ROUTES_TITLE;
 
+      // 2. Wait for fonts to load smoothly, then reveal content and run logic
       document.fonts.ready.then(() => {
-        // Small delay to ensure smooth transition and avoid flash of unstyled content
         setTimeout(() => {
           document.querySelectorAll('.skeleton').forEach(el => {
             el.classList.remove('skeleton');
           });
           
-          // Execute redirect logic
           redirectUser();
         }, 300);
       });
