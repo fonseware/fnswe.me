@@ -29,7 +29,7 @@ To get your own redirector up and running, follow these steps:
    * You can also customize timing, text strings, and the primary theme colors within the \<style\> block at the top of the file.  
    * *Note: You only need to edit index.html\! This project includes an automated GitHub Action that will copy your changes to 404.html for you.*  
 3. **Edit redirects.json:** Add your custom paths and destinations here. The file needs to be formatted as a JSON array. We have added support for tags to help organize your links.
-
+```json
    \[  
      {  
        "id": "status",  
@@ -42,7 +42,7 @@ To get your own redirector up and running, follow these steps:
        "tags": \["social", "code"\]  
      }  
    \]
-
+```
 ## **Features & Automation**
 
 * **Automated Sync:** To make life easy, this project already comes with a GitHub Actions workflow attached. Whenever you push changes to index.html, this action automatically copies those changes over to 404.html so you do not have to do it manually.  
