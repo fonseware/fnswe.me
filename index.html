@@ -440,7 +440,8 @@
     window.addEventListener("load", () => {
       // 1. Apply configurations to the DOM immediately
       document.getElementById("dynamic-favicon").href = CONFIG.FAVICON_URL;
-      document.getElementById("logo-img").src = CONFIG.LOGO_URL;
+      const logoImg = document.getElementById("logo-img");
+      logoImg.src = CONFIG.LOGO_URL;
       document.getElementById("logo-link").href = CONFIG.HOST_DOMAIN;
       
       document.getElementById("redirect-desc").textContent = CONFIG.TXT_DESC;
@@ -449,8 +450,18 @@
       document.getElementById("seconds-label").textContent = CONFIG.TXT_SECONDS;
       document.getElementById("routes-title").textContent = CONFIG.TXT_ROUTES_TITLE;
 
-      // 2. Wait for fonts to load smoothly, then reveal content and run logic
-      document.fonts.ready.then(() => {
+      // Create a cheeky little promise to track when the image actually finishes loading
+      const imgLoadPromise = new Promise((resolve) => {
+        if (logoImg.complete) {
+          resolve();
+        } else {
+          logoImg.onload = resolve;
+          logoImg.onerror = resolve; // resolves on error too so we don't end up dead in the water
+        }
+      });
+
+      // 2. Wait for fonts AND the image to load smoothly, then drop the act and reveal content
+      Promise.all([document.fonts.ready, imgLoadPromise]).then(() => {
         setTimeout(() => {
           document.querySelectorAll('.skeleton').forEach(el => {
             el.classList.remove('skeleton');
